@@ -2,20 +2,21 @@ import asyncore
 import time
 import signal
 from threading import Thread
+import os
 
 class termcore:
 	_name = 'junk'
 	_domain = 'junkville'
-	_directory = '/some/jonk'
+	_directory = ''
 	prompt = _name + "@" + _domain +":" + _directory + "$ "
 	_currentProcess = None
 
 
 	def preExec(self, command):
-		pass
+		return command
 
 	def postExec(self, response):
-		pass
+		return response
 
 	def Exec(self, payload):
 		pass
@@ -23,7 +24,7 @@ class termcore:
 	#loop for imitating a terminal
 	def cycle(self):
 		#bash style name-domain-directory
-		termbanner = self._name + "@" + self._domain + ":" + self._directory + "$ "
+		termbanner = "\033[1;31m" + self._name + "@" + self._domain + "\033[1;37m:\033[1;34m" + self._directory + "\033[1;37m$ "
 		print(termbanner, end='')
 
 		cmd = input() #Need improvements, i definitely want arrow keys
@@ -39,24 +40,31 @@ class termcore:
 	def cd(self, directory):
 		pass
 
+	def customCommands(self,command, params):
+		return False
+
 	#Routine for running single command on the system
-	def _cycle_single_command(self, command, params):
+	def _cycle_single_command(self, command, params = ''):
 		if command == "cd":
 			self.cd(params[0])
+			return None
 		if command == "exit":
 			exit(0)
-		else:
-			time.sleep(100000)
+
+		if self.customCommands(command, params):
+			return
+
 		_payload 	= self.preExec(command)
 		_response 	= self.Exec(_payload)
 		_output 	= self.postExec(_response)
 
 
-	def __init__(self, name,domain,initialDirectory):
-		_name = name
-		_domain = domain
-		_directory = initialDirectory
-		signal.signal(signal.SIGINT, self._sigintHandler)
+	def __init__(self, name,domain,initialDirectory=os.getcwd()):
+		self._directory = initialDirectory
+		self._name = name
+		self._domain = domain
+		
+		#signal.signal(signal.SIGINT, self._sigintHandler)
 		while True:
 			self.cycle()
 
@@ -83,5 +91,3 @@ class termcore:
 
 
 
-
-term = termcore("junk", "junkville", "/root/junk")
