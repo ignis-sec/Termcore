@@ -5,7 +5,7 @@
 
 # Sample Uses
 
-### Sample shell with hidden user *this is just a sample this is not by any means secure*
+### Sample shell with hidden user (*this is just a sample this is not by any means secure*)
 
 ```py
 from termcore import termcore
