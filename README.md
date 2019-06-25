@@ -105,13 +105,13 @@ For example,
 
 So if RCE response is returned in as a cookie, get http response and only return the cookie.
 
-If RCE response is returned in a <div id="something">, parse the html and return only the div innerhtml.
+If RCE response is returned in a div id="something", parse the html and return only the div innerhtml.
 
-### cd(self, directory): *OPTIONAL*
+### cd(self, directory): (*OPTIONAL*)
 > change working directory.
 
 cd is implemented on the terminal, as it is with any terminal program. If you need to change directories, implement your own logic for it.
 
-### customCommands(self,command, params):
+### customCommands(self,command, params): (*OPTIONAL*)
 > Evaluated first before the Exec. Should return `True` if a custom command is being processed, and `False` if not.
 
