@@ -11,4 +11,4 @@ class myTerm(termcore):
 			return True
 		return False
 		
-term = myTerm("hiddenuser", "kali")
+term = myTerm("h", "kali")

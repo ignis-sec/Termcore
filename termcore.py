@@ -3,6 +3,10 @@ import time
 import signal
 from threading import Thread
 import os
+import readline
+
+readline.parse_and_bind('set editing-mode vi')
+readline.parse_and_bind('tab: complete')
 
 class termcore:
 	_name = 'junk'
@@ -12,8 +16,8 @@ class termcore:
 	_currentProcess = None
 
 
-	def preExec(self, command):
-		return command
+	def preExec(self, command, params):
+		return command + " " + params
 
 	def postExec(self, response):
 		return response
@@ -25,14 +29,16 @@ class termcore:
 	def cycle(self):
 		#bash style name-domain-directory
 		termbanner = "\033[1;31m" + self._name + "@" + self._domain + "\033[1;37m:\033[1;34m" + self._directory + "\033[1;37m$ "
-		print(termbanner, end='')
 
-		cmd = input() #Need improvements, i definitely want arrow keys
+		cmd = input(termbanner)
 		#split command and parameters
-		parameters = ""
-		
+		cmd = cmd.split(" ", 1)
+		if(len(cmd)!=1):
+			parameters = cmd[1]
+		else:
+			parameters = ''
 		#Run as a thread but wait for the thread to stop. Only reason this is run as a seperate thread is so we can keep a reference to it, and kill it with sigint
-		_currentProcess = Thread(target=self._cycle_single_command, args= (cmd, parameters))
+		_currentProcess = Thread(target=self._cycle_single_command, args= (cmd[0], parameters))
 		_currentProcess.start()
 		_currentProcess.join()
 
@@ -54,7 +60,7 @@ class termcore:
 		if self.customCommands(command, params):
 			return
 
-		_payload 	= self.preExec(command)
+		_payload 	= self.preExec(command, params)
 		_response 	= self.Exec(_payload)
 		_output 	= self.postExec(_response)
 
